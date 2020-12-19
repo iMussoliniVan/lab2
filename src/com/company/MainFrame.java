@@ -1,41 +1,29 @@
 package com.company;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 320;
+    private static final double e = 2.718;
+    private JLabel formulaLabel;
     private JTextField textFieldX;
     private JTextField textFieldY;
+    private JTextField textFieldZ;
     private JTextField textFieldResult;
     private ButtonGroup radioButtons = new ButtonGroup();
     private Box hboxFormulaType = Box.createHorizontalBox();
     private int formulaId = 1;
 
-    public Double calculate1(Double x, Double y) {
-        return x*x + y*y;
+    public Double calculate1(Double x, Double y, Double z) {
+        return Math.pow(Math.log((1 + x)*(1 + x)) + Math.cos(3.14 * z * z * z), Math.sin(y)) + Math.pow(Math.pow(e,x*x)+ Math.cos(Math.pow(e,z))+Math.pow(1/y,0.5),1/x);
     }
-
-    public Double calculate2(Double x, Double y) {
-        return x*x*x + 1/y;
+    public Double calculate2(Double x, Double y, Double z) {
+        return Math.pow(Math.cos(3.14 * x * x * x) + Math.log((1 + y)*(1 + y)), 1/4) * (Math.pow(e, z * z) + Math.pow(1/x, 0.5) + Math.cos(Math.pow(e, y)));
     }
 
     private void addRadioButton(String buttonName, final int formulaId) {
@@ -43,6 +31,13 @@ public class MainFrame extends JFrame {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 MainFrame.this.formulaId = formulaId;
+                if(formulaId == 1){
+                    ImageIcon icon = new ImageIcon("C:\\java\\labs\\lab2\\res\\1.png");
+                    formulaLabel.setIcon(icon);
+                }else{
+                    ImageIcon icon = new ImageIcon("C:\\java\\labs\\lab2\\res\\2.png");
+                    formulaLabel.setIcon(icon);
+                }
             }
         });
         radioButtons.add(button);
@@ -60,6 +55,11 @@ public class MainFrame extends JFrame {
         addRadioButton("Формула 2", 2);
         radioButtons.setSelected(
                 radioButtons.getElements().nextElement().getModel(), true);
+        Box image = Box.createHorizontalBox();
+        image.add(Box.createHorizontalGlue());
+        formulaLabel = new JLabel("");
+        image.add(formulaLabel);
+        image.add(Box.createHorizontalGlue());
         hboxFormulaType.add(Box.createHorizontalGlue());
         hboxFormulaType.setBorder(
                 BorderFactory.createLineBorder(Color.YELLOW));
@@ -69,18 +69,27 @@ public class MainFrame extends JFrame {
         JLabel labelForY = new JLabel("Y:");
         textFieldY = new JTextField("0", 10);
         textFieldY.setMaximumSize(textFieldY.getPreferredSize());
+        JLabel labelForZ = new JLabel("Z:");
+        textFieldZ = new JTextField("0", 10);
+        textFieldZ.setMaximumSize(textFieldZ.getPreferredSize());
         Box hboxVariables = Box.createHorizontalBox();
         hboxVariables.setBorder(
                 BorderFactory.createLineBorder(Color.RED));
-        hboxVariables.add(Box.createHorizontalGlue());
+        //boxVariables.add(Box.createHorizontalGlue());
         hboxVariables.add(labelForX);
         hboxVariables.add(Box.createHorizontalStrut(10));
         hboxVariables.add(textFieldX);
-        hboxVariables.add(Box.createHorizontalStrut(100));
+        hboxVariables.add(Box.createHorizontalGlue());
+        // hboxVariables.add(Box.createHorizontalStrut(50));
         hboxVariables.add(labelForY);
         hboxVariables.add(Box.createHorizontalStrut(10));
         hboxVariables.add(textFieldY);
         hboxVariables.add(Box.createHorizontalGlue());
+        //hboxVariables.add(Box.createHorizontalStrut(50));
+        hboxVariables.add(labelForZ);
+        hboxVariables.add(Box.createHorizontalStrut(10));
+        hboxVariables.add(textFieldZ);
+        //hboxVariables.add(Box.createHorizontalGlue());
         JLabel labelForResult = new JLabel("Результат:");
         textFieldResult = new JTextField("0", 10);
         textFieldResult.setMaximumSize(
@@ -98,11 +107,12 @@ public class MainFrame extends JFrame {
                 try {
                     Double x = Double.parseDouble(textFieldX.getText());
                     Double y = Double.parseDouble(textFieldY.getText());
+                    Double z = Double.parseDouble(textFieldZ.getText());
                     Double result;
                     if (formulaId==1)
-                        result = calculate1(x, y);
+                        result = calculate1(x, y, z);
                     else
-                        result = calculate2(x, y);
+                        result = calculate2(x, y, z);
                     textFieldResult.setText(result.toString());
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(MainFrame.this,
@@ -116,6 +126,7 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent ev) {
                 textFieldX.setText("0");
                 textFieldY.setText("0");
+                textFieldZ.setText("0");
                 textFieldResult.setText("0");
             }
         });
@@ -128,13 +139,15 @@ public class MainFrame extends JFrame {
         hboxButtons.setBorder(
                 BorderFactory.createLineBorder(Color.GREEN));
         Box contentBox = Box.createVerticalBox();
-        contentBox.add(Box.createVerticalGlue());
+        contentBox.add(image);
         contentBox.add(hboxFormulaType);
         contentBox.add(hboxVariables);
         contentBox.add(hboxResult);
         contentBox.add(hboxButtons);
         contentBox.add(Box.createVerticalGlue());
         getContentPane().add(contentBox, BorderLayout.CENTER);
+        ImageIcon icon = new ImageIcon("C:\\java\\labs\\lab2\\res\\1.png");
+        formulaLabel.setIcon(icon);
     }
 
     public static void main(String[] args) {
